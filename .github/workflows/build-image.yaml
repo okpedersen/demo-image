@@ -1,0 +1,22 @@
+name: Build server image
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Login to GitHub Package Registry
+        uses: docker/login-action@v1.9.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: docker build . -t "ghcr.io/${{ github.repository_owner }}/demo-image:latest"
+      - name: Push
+        run: docker push "ghcr.io/${{ github.repository_owner }}/demo-image:latest"
